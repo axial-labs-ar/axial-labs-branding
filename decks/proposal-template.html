@@ -44,7 +44,7 @@
       background: var(--axial-bone);
       color: var(--axial-black);
       margin: 32px auto;
-      padding: 18mm 22mm 32mm 34mm; /* bottom 32mm = 18mm clearance above footer at 14mm */
+      padding: 18mm 18mm 32mm 18mm; /* bottom 32mm = 18mm clearance above footer at 14mm; left/right symmetric */
       position: relative;
       box-sizing: border-box;
       break-after: page;
@@ -52,21 +52,10 @@
       box-shadow: 0 2px 16px rgba(10,10,11,0.10), 0 1px 4px rgba(10,10,11,0.06);
     }
 
-    /* Axis line — left margin */
-    .doc-page::before {
-      content: '';
-      position: absolute;
-      left: 22mm;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: var(--graphite-200);
-    }
-
     /* Axis tick marks */
     .axis-ticks {
       position: absolute;
-      left: calc(22mm - 3px);
+      left: calc(18mm - 3px);
       top: 0;
       bottom: 0;
       width: 7px;
@@ -178,8 +167,8 @@
     .running-footer {
       position: absolute;
       bottom: 14mm;
-      left: 34mm;
-      right: 22mm;
+      left: 18mm;
+      right: 18mm;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -451,7 +440,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 7px 12px;
+      padding: 6px 12px;
       border-bottom: 1px solid var(--graphite-100);
     }
     .breakdown-row:last-child { border-bottom: none; }
@@ -535,8 +524,8 @@
        Only the outer border gets the voltage color. */
     .roi-hero {
       border: 1px solid var(--axial-voltage-dim);
-      padding: 18px 20px 20px;
-      margin-bottom: 24px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
     }
     .roi-hero-label {
       font-family: var(--font-mono);
@@ -546,7 +535,7 @@
       text-transform: uppercase;
       color: var(--graphite-500);
       display: block;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
     .roi-grid {
       display: grid;
@@ -554,7 +543,7 @@
       border: 1px solid var(--graphite-200);
     }
     .roi-metric {
-      padding: 12px 14px;
+      padding: 10px 12px;
       border-right: 1px solid var(--graphite-200);
     }
     .roi-metric:last-child { border-right: none; }
@@ -585,7 +574,7 @@
       font-size: 12px;
       line-height: 1.6;
       color: var(--graphite-600);
-      margin: 14px 0 0;
+      margin: 10px 0 0;
     }
 
     /* ─── PHASE CARDS (ROADMAP PAGE) ────────────────────────── */
@@ -670,12 +659,12 @@
       margin-bottom: 20px;
     }
     .price-main {
-      padding: 18px 20px;
+      padding: 12px 14px;
       border-right: 1px solid var(--graphite-200);
       border-left: 3px solid var(--axial-voltage-dim);
     }
     .price-future {
-      padding: 18px 20px;
+      padding: 12px 14px;
       background: var(--graphite-100);
     }
     .price-main-label,
@@ -718,10 +707,10 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       border: 1px solid var(--graphite-200);
-      margin-bottom: 12px;
+      margin-bottom: 5px;
     }
     .payment-block {
-      padding: 12px 14px;
+      padding: 9px 12px;
       border-right: 1px solid var(--graphite-200);
     }
     .payment-block:last-child { border-right: none; }
@@ -737,28 +726,49 @@
     }
     .payment-block-amount {
       font-family: var(--font-display);
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
       letter-spacing: -0.02em;
       color: var(--axial-black);
-      margin: 0 0 2px;
     }
     .payment-block-desc {
-      font-size: 10px;
-      color: var(--graphite-500);
-      margin: 0;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--graphite-400);
+      margin-left: 6px;
     }
 
     /* ─── PRINT ──────────────────────────────────────────────── */
     @page { size: A4 portrait; margin: 0; }
 
     @media print {
+      :root {
+        /* Print-only contrast fixes — same hues as the screen tokens, just
+           darker. --axial-voltage-dim and --graphite-400/300 are unchanged
+           on screen; this scope only fires inside @media print. */
+        --axial-voltage-print: #7C9A2E;
+        --graphite-400: #62666F;
+        --graphite-300: #7E838C;
+      }
       body { background: transparent; }
       .doc-page {
         margin: 0;
         box-shadow: none;
         break-after: page;
+        background: #FFFFFF; /* drop the bone fill — was a full-ink block on every sheet */
       }
+      .timeline-duration,
+      .pricing-tier--selected .pricing-tier-name,
+      .breakdown-row--total .breakdown-label,
+      .breakdown-row--total .breakdown-amount,
+      .phase-card--active .phase-card-eyebrow {
+        color: var(--axial-voltage-print);
+      }
+      .roi-hero { border-color: var(--axial-voltage-print); }
+      .price-main { border-left-color: var(--axial-voltage-print); }
+      .phase-card--active { border-left-color: var(--axial-voltage-print); }
+      .pricing-tier--selected { border-left-color: var(--axial-voltage-print); }
+      .scope-check polyline { stroke: var(--axial-voltage-print); }
     }
   </style>
 </head>
@@ -769,10 +779,8 @@
 ═══════════════════════════════════ -->
 <div class="doc-page doc-page--cover">
 
-  <!-- Axis ticks -->
   <div class="axis-ticks" aria-hidden="true">
     <svg viewBox="0 0 7 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Ticks every ~10% of page height, 5px wide from axis -->
       <line x1="3" y1="100" x2="7" y2="100" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
       <line x1="3" y1="200" x2="7" y2="200" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
       <line x1="3" y1="300" x2="7" y2="300" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
@@ -848,6 +856,7 @@
      02 / 07 — BRIEF + APPROACH
 ═══════════════════════════════════ -->
 <div class="doc-page">
+
   <div class="axis-ticks" aria-hidden="true">
     <svg viewBox="0 0 7 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="3" y1="100" x2="7" y2="100" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
@@ -861,7 +870,6 @@
       <line x1="3" y1="900" x2="7" y2="900" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
     </svg>
   </div>
-
   <div class="running-header">
     <span class="rh-wordmark">AXIAL LABS</span>
     <span class="rh-ref">→ PROPOSAL · [CLIENT NAME] · YYYY-MM-DD</span>
@@ -906,6 +914,7 @@
      03 / 07 — SCOPE
 ═══════════════════════════════════ -->
 <div class="doc-page">
+
   <div class="axis-ticks" aria-hidden="true">
     <svg viewBox="0 0 7 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="3" y1="100" x2="7" y2="100" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
@@ -919,7 +928,6 @@
       <line x1="3" y1="900" x2="7" y2="900" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
     </svg>
   </div>
-
   <div class="running-header">
     <span class="rh-wordmark">AXIAL LABS</span>
     <span class="rh-ref">→ PROPOSAL · [CLIENT NAME] · YYYY-MM-DD</span>
@@ -1063,6 +1071,7 @@
      04 / 07 — TIMELINE
 ═══════════════════════════════════ -->
 <div class="doc-page">
+
   <div class="axis-ticks" aria-hidden="true">
     <svg viewBox="0 0 7 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="3" y1="100" x2="7" y2="100" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
@@ -1076,7 +1085,6 @@
       <line x1="3" y1="900" x2="7" y2="900" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
     </svg>
   </div>
-
   <div class="running-header">
     <span class="rh-wordmark">AXIAL LABS</span>
     <span class="rh-ref">→ PROPOSAL · [CLIENT NAME] · YYYY-MM-DD</span>
@@ -1165,6 +1173,7 @@
      automatic — they activate when a specific business condition is met.
 ═══════════════════════════════════
 <div class="doc-page">
+
   <div class="axis-ticks" aria-hidden="true">
     <svg viewBox="0 0 7 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="3" y1="100" x2="7" y2="100" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
@@ -1178,7 +1187,6 @@
       <line x1="3" y1="900" x2="7" y2="900" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
     </svg>
   </div>
-
   <div class="running-header">
     <span class="rh-wordmark">AXIAL LABS</span>
     <span class="rh-ref">→ PROPOSAL · [CLIENT NAME] · YYYY-MM-DD</span>
@@ -1248,6 +1256,7 @@
      05 / 07 — PRICING
 ═══════════════════════════════════ -->
 <div class="doc-page">
+
   <div class="axis-ticks" aria-hidden="true">
     <svg viewBox="0 0 7 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="3" y1="100" x2="7" y2="100" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
@@ -1261,7 +1270,6 @@
       <line x1="3" y1="900" x2="7" y2="900" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
     </svg>
   </div>
-
   <div class="running-header">
     <span class="rh-wordmark">AXIAL LABS</span>
     <span class="rh-ref">→ PROPOSAL · [CLIENT NAME] · YYYY-MM-DD</span>
@@ -1272,7 +1280,7 @@
     <h2 class="h2">Investment.</h2>
   </div>
 
-  <p class="body-text" style="margin-bottom:24px;">Fixed price. No upsells, no surprise scope — everything in the previous section is included at the price below.</p>
+  <p class="body-text" style="margin-bottom:10px;">Fixed price. No upsells, no surprise scope — everything in the previous section is included at the price below.</p>
 
   <!-- ROI HERO — lead with return-on-investment, not the cost.
        Recovery period is the primary signing driver for clients who already
@@ -1303,7 +1311,7 @@
   <!-- PRICE 2-COL: use when there's one price (current engagement) + a future tier.
        NEVER repeat the same dollar amount in two columns — it looks like two charges.
        For genuine multi-tier proposals, use .pricing-tiers (3-col) below instead. -->
-  <div class="price-2col" style="margin-bottom:20px;">
+  <div class="price-2col" style="margin-bottom:10px;">
     <div class="price-main">
       <span class="price-main-label">→ [TIER NAME] · PRECIO FIJO</span>
       <p class="price-main-amount">$[X]</p>
@@ -1336,8 +1344,8 @@
   </div>
   -->
 
-  <span class="eyebrow" style="margin-bottom:14px;">→ [TIER NAME] · DESGLOSE</span>
-  <div class="breakdown">
+  <span class="eyebrow" style="margin-bottom:6px;">→ [TIER NAME] · DESGLOSE</span>
+  <div class="breakdown" style="margin-bottom:10px;">
     <div class="breakdown-row">
       <span class="breakdown-label">Discovery and strategy</span>
       <span class="breakdown-amount">$1,500</span>
@@ -1372,20 +1380,20 @@
     </div>
   </div>
 
-  <div class="payment-split" style="margin-top:16px;">
+  <div class="payment-split">
     <div class="payment-block">
       <span class="payment-block-label">PAGO 1 · AL FIRMAR</span>
-      <p class="payment-block-amount">$[X] <span style="font-size:12px; font-weight:400; color:var(--graphite-500);">50%</span></p>
-      <p class="payment-block-desc">para iniciar el trabajo</p>
+      <span class="payment-block-amount">$[X]</span>
+      <span class="payment-block-desc">50% — para iniciar el trabajo</span>
     </div>
     <div class="payment-block">
       <span class="payment-block-label">PAGO 2 · CONTRA ENTREGA</span>
-      <p class="payment-block-amount">$[Y] <span style="font-size:12px; font-weight:400; color:var(--graphite-500);">50%</span></p>
-      <p class="payment-block-desc">sistema funcionando en producción</p>
+      <span class="payment-block-amount">$[Y]</span>
+      <span class="payment-block-desc">50% — sistema funcionando en producción</span>
     </div>
   </div>
-  <p class="caption" style="margin-top:6px;">Pagos en pesos argentinos al tipo de cambio del día. Transferencia bancaria. Tipo de cambio fijado al momento de cada pago.</p>
-  <p class="caption" style="margin-top:4px;">[If post-delivery costs apply, add one line here. e.g. "Costo mensual estimado post-entrega: $X–Y/mes. Ver Condiciones para detalle."]</p>
+  <p class="caption" style="margin-bottom:0;">Pagos en pesos argentinos al tipo de cambio del día. Transferencia bancaria. Tipo de cambio fijado al momento de cada pago.</p>
+  <!-- If post-delivery costs apply, add one line here, e.g. "Costo mensual estimado post-entrega: $X–Y/mes. Ver Condiciones para detalle." -->
 
   <div class="running-footer">
     <span class="rf-label">Confidential — Axial Labs</span>
@@ -1398,6 +1406,7 @@
      06 / 07 — TERMS
 ═══════════════════════════════════ -->
 <div class="doc-page">
+
   <div class="axis-ticks" aria-hidden="true">
     <svg viewBox="0 0 7 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="3" y1="100" x2="7" y2="100" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
@@ -1411,7 +1420,6 @@
       <line x1="3" y1="900" x2="7" y2="900" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
     </svg>
   </div>
-
   <div class="running-header">
     <span class="rh-wordmark">AXIAL LABS</span>
     <span class="rh-ref">→ PROPOSAL · [CLIENT NAME] · YYYY-MM-DD</span>
@@ -1468,6 +1476,7 @@
      07 / 07 — SIGN-OFF
 ═══════════════════════════════════ -->
 <div class="doc-page">
+
   <div class="axis-ticks" aria-hidden="true">
     <svg viewBox="0 0 7 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="3" y1="100" x2="7" y2="100" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
@@ -1481,7 +1490,6 @@
       <line x1="3" y1="900" x2="7" y2="900" stroke="#D8DAE0" stroke-width="1" stroke-linecap="square"/>
     </svg>
   </div>
-
   <div class="running-header">
     <span class="rh-wordmark">AXIAL LABS</span>
     <span class="rh-ref">→ PROPOSAL · [CLIENT NAME] · YYYY-MM-DD</span>
